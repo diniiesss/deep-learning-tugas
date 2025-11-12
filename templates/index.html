@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas Mata Kuliah Deep Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="blue-header">
+        <h1>Tugas Mata Kuliah Deep Learning</h1>
+        <p>Nama: Andini Sekar Chayyu</p>
+        <p>NPM: 50422218</p>
+        <p>Kelas: 4IA08</p>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Daftar Tugas:</h2>
+            <ol>
+                <li><div class="sidebar-item" onclick="showTask('tugas1')">1. Calculator Operator Logika</div></li>
+                <li><div class="sidebar-item" onclick="showTask('tugas2')">2. Prediksi Kata dengan Bidirectional</div></li>
+                <li><div class="sidebar-item" onclick="showTask('tugas3')">3. Prediksi Harga Saham</div></li>
+            </ol>
+        </aside>
+
+        <main class="content">
+            <h2 class="main-title" id="main-title">Algoritma Deep Learning</h2>
+
+            <hr>
+
+            <section id="pengantar" class="task-content">
+                <h3>Selamat Datang!</h3>
+                <p>Silakan pilih salah satu tugas dari daftar di sidebar untuk melihat tampilan antarmuka dan mencoba fungsinya.</p>
+            </section>
+            
+
+            <section id="tugas1" class="task-content green-bg">
+                <h3>1. Calculator Operator Logika</h3>
+                <p>Aplikasi untuk menghitung hasil operasi logika biner dan menampilkan tabel kebenaran lengkap.</p>
+                
+                <form action="/tugas1" method="post" class="task-form">
+                    <div style="display: flex; gap: 20px; justify-content: space-between;">
+                        <div style="flex: 1;">
+                            <label for="input1_t1">Input P (0 atau 1):</label>
+                            <select id="input1_t1" name="input_a" required style="width: 100%; padding: 8px;">
+                                <option value="1" {% if hasil_t1 and hasil_t1.input_a == '1' %} selected {% endif %}>1</option>
+                                <option value="0" {% if hasil_t1 and hasil_t1.input_a == '0' %} selected {% endif %}>0</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="input2_t1">Input Q (0 atau 1):</label>
+                            <select id="input2_t1" name="input_b" required style="width: 100%; padding: 8px;">
+                                <option value="0" {% if hasil_t1 and hasil_t1.input_b == '0' %} selected {% endif %}>0</option>
+                                <option value="1" {% if hasil_t1 and hasil_t1.input_b == '1' %} selected {% endif %}>1</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label for="operator_t1" style="margin-top: 15px;">Pilih Operator:</label>
+                    <select id="operator_t1" name="operator" required>
+                        <option value="AND" {% if hasil_t1 and hasil_t1.operator == 'AND' %} selected {% endif %}>AND</option>
+                        <option value="OR" {% if hasil_t1 and hasil_t1.operator == 'OR' %} selected {% endif %}>OR</option>
+                        <option value="XOR" {% if hasil_t1 and hasil_t1.operator == 'XOR' %} selected {% endif %}>XOR</option>
+                        <option value="NAND" {% if hasil_t1 and hasil_t1.operator == 'NAND' %} selected {% endif %}>NAND</option>
+                        <option value="NOR" {% if hasil_t1 and hasil_t1.operator == 'NOR' %} selected {% endif %}>NOR</option>
+                        <option value="XNOR" {% if hasil_t1 and hasil_t1.operator == 'XNOR' %} selected {% endif %}>XNOR</option>
+                    </select>
+                    <button type="submit">Hitung dan Tampilkan Tabel</button>
+                </form>
+                
+                {% if hasil_t1 %}
+                    <div class="result-box">
+                        {% if hasil_t1.error %}
+                            <p style="color: red;"><strong>{{ hasil_t1.error }}</strong></p>
+                        {% else %}
+                            <h4>Hasil Perhitungan:</h4>
+                            <p>P = <strong>{{ hasil_t1.input_a }}</strong>, Q = <strong>{{ hasil_t1.input_b }}</strong>, Operasi = <strong>{{ hasil_t1.operator }}</strong></p>
+                            <p>Hasil <strong>P {{ hasil_t1.operator }} Q</strong>: <strong style="font-size: 1.5em;">{{ hasil_t1.output }}</strong></p>
+
+                            <h4 style="margin-top: 20px;">Tabel Kebenaran (Truth Table)</h4>
+                            <div style="overflow-x: auto;">
+                                <table class="truth-table">
+                                    <thead>
+                                        <tr>
+                                            <th>P</th>
+                                            <th>Q</th>
+                                            <th>P {{ hasil_t1.operator }} Q</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for row in hasil_t1.tabel %}
+                                        <tr {% if row.P == hasil_t1.input_a and row.Q == hasil_t1.input_b %} class="highlight" {% endif %}>
+                                            <td>{{ row.P }}</td>
+                                            <td>{{ row.Q }}</td>
+                                            <td>{{ row.Hasil }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+           
+            <section id="tugas2" class="task-content green-bg">
+                <h3>2. Prediksi Teks/Kata dengan Varian RNN (Termasuk Bidirectional)</h3>
+                <p>Melatih model RNN (Vanilla, Bidirectional, LSTM, GRU) untuk memprediksi karakter berikutnya berdasarkan teks pelatihan.</p>
+                
+                <form action="/tugas2" method="post" class="task-form">
+                    <label for="input_text_t2">Teks Pelatihan (Semakin panjang, semakin baik):</label>
+                    <textarea id="input_text_t2" name="input_text" rows="5" required>
+                        {{ hasil_t2.input_text if hasil_t2 and hasil_t2.input_text else "Ini adalah contoh teks yang diaktifkan oleh Recurrent Neural Networks. Deep learning mempelajari data sekuensial dan model RNN digunakan untuk prediksi karakter berikutnya, seperti LSTM dan GRU. Coba bandingkan hasil teks dari berbagai model!" }}
+                    </textarea>
+                    
+                    <label for="model_choice_t2">Pilih Model RNN:</label>
+                    <select id="model_choice_t2" name="model_choice" required>
+                        <option value="LSTM" {% if hasil_t2 and hasil_t2.model_choice == 'LSTM' %} selected {% endif %}>LSTM</option>
+                        <option value="Bidirectional RNN" {% if hasil_t2 and hasil_t2.model_choice == 'Bidirectional RNN' %} selected {% endif %}>Bidirectional RNN</option>
+                        <option value="Vanilla RNN" {% if hasil_t2 and hasil_t2.model_choice == 'Vanilla RNN' %} selected {% endif %}>Vanilla RNN</option>
+                        <option value="GRU" {% if hasil_t2 and hasil_t2.model_choice == 'GRU' %} selected {% endif %}>GRU</option>
+                    </select>
+                    
+                    <label for="seed_text_t2">Seed Text (Min. 5 Karakter):</label>
+                    <input type="text" id="seed_text_t2" name="seed_text" value="{{ hasil_t2.seed_text if hasil_t2 and hasil_t2.seed_text else 'Model' }}" required>
+                    
+                    <label for="gen_length_t2">Jumlah Karakter yang Dihasilkan (10-500):</label>
+                    <input type="number" id="gen_length_t2" name="gen_length" value="{{ hasil_t2.gen_length if hasil_t2 and hasil_t2.gen_length else 150 }}" min="10" max="500" required>
+                    
+                    <label for="epochs_t2">Jumlah Epoch (10-100):</label>
+                    <input type="number" id="epochs_t2" name="epochs" value="{{ hasil_t2.epochs if hasil_t2 and hasil_t2.epochs else 30 }}" min="10" max="100" required>
+                    
+                    <button type="submit">Jalankan Model & Generate Teks</button>
+                </form>
+                
+                {% if hasil_t2 %}
+                    <div class="result-box">
+                        {% if hasil_t2.error %}
+                            <p style="color: red;"><strong>{{ hasil_t2.error }}</strong></p>
+                        {% else %}
+                            <p>Model Dipilih: <strong>{{ hasil_t2.model_choice }}</strong></p>
+                            <p>Seed Text: <strong>{{ hasil_t2.seed_text }}</strong></p>
+                            <p>Hasil Teks Generator:</p>
+                            <textarea rows="8" readonly style="width: 100%; border: 1px solid #ddd; padding: 10px; margin-top: 5px;">{{ hasil_t2.predicted_text }}</textarea>
+                            
+                            <h4>Grafik Akurasi Training</h4>
+                            {{ hasil_t2.plot_html | safe }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+            
+            <section id="tugas3" class="task-content green-bg">
+                <h3>3. Prediksi Harga Saham (LSTM Time Series)</h3>
+                <p>Implementasi model RNN varian (LSTM, GRU, Bidirectional LSTM, Vanilla RNN) untuk memprediksi harga penutupan saham BBCA.</p>
+                
+                <form action="/tugas3" method="post" class="task-form">
+                    <label for="stock_symbol_t3">Simbol Saham:</label>
+                    <input type="text" id="stock_symbol_t3" name="stock_symbol" value="BBCA" readonly style="background-color: #eee;">
+                    
+                    <label for="model_choice_t3">Pilih Varian Model:</label>
+                    <select id="model_choice_t3" name="model_choice_t3" required>
+                        <option value="LSTM" {% if hasil_t3 and hasil_t3.model_choice_t3 == 'LSTM' %} selected {% endif %}>LSTM</option>
+                        <option value="GRU" {% if hasil_t3 and hasil_t3.model_choice_t3 == 'GRU' %} selected {% endif %}>GRU</option>
+                        <option value="Bidirectional LSTM" {% if hasil_t3 and hasil_t3.model_choice_t3 == 'Bidirectional LSTM' %} selected {% endif %}>Bidirectional LSTM</option>
+                        <option value="Vanilla RNN" {% if hasil_t3 and hasil_t3.model_choice_t3 == 'Vanilla RNN' %} selected {% endif %}>Vanilla RNN</option>
+                    </select>
+                    
+                    <label for="pred_days_t3">Jumlah Hari Prediksi (1-30 Hari):</label>
+                    <input type="number" id="pred_days_t3" name="pred_days" value="{{ hasil_t3.days if hasil_t3 and hasil_t3.days else 7 }}" min="1" max="30" required>
+                    
+                    <button type="submit">Jalankan Prediksi</button>
+                </form>
+                
+                {% if hasil_t3 %}
+                    <div class="result-box">
+                        {% if hasil_t3.error %}
+                            <p style="color: red;"><strong>{{ hasil_t3.error }}</strong></p>
+                        {% else %}
+                            <p>Model Digunakan: <strong>{{ hasil_t3.model_choice_t3 }}</strong></p>
+                            <p>Simbol Saham: <strong>{{ hasil_t3.symbol }}</strong></p>
+                            <p>Prediksi Harga Penutupan Hari Pertama (ke-1) dari {{ hasil_t3.days }} hari:</p>
+                            <p style="font-size: 1.5em;"><strong>Rp {{ hasil_t3.prediction }}</strong></p>
+                            
+                            <h4>Grafik Prediksi Harga Saham</h4>
+                            {{ hasil_t3.plot_html | safe }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
+            <hr>
+        </main>
+    </div>
+
+    <script>
+        // Fungsi untuk mengkonversi taskId menjadi judul yang sesuai
+        function getTaskTitle(taskId) {
+            switch(taskId) {
+                case 'tugas1':
+                    return "Tugas 1: Calculator Operator Logika";
+                case 'tugas2':
+                    return "Tugas 2: Prediksi Kata dengan Bidirectional";
+                case 'tugas3':
+                    return "Tugas 3: Prediksi Harga Saham";
+                case 'pengantar':
+                default:
+                    return "Algoritma Deep Learning";
+            }
+        }
+
+        // Fungsi untuk menyembunyikan semua konten dan menampilkan yang dipilih
+        function showTask(taskId) {
+            // 1. UPDATE JUDUL UTAMA
+            const mainTitleElement = document.getElementById('main-title');
+            if (mainTitleElement) {
+                mainTitleElement.innerHTML = getTaskTitle(taskId);
+            }
+
+            // 2. KONTROL TAMPILAN KONTEN
+            // Sembunyikan semua elemen dengan kelas 'task-content'
+            const contents = document.querySelectorAll('.task-content');
+            contents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Tampilkan elemen dengan ID yang sesuai
+            const selectedTask = document.getElementById(taskId);
+            if (selectedTask) {
+                selectedTask.style.display = 'block';
+            }
+            
+            // 3. KONTROL STATUS ACTIVE PADA SIDEBAR
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeItem = document.querySelector(`[onclick="showTask('${taskId}')"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+        }
+
+        // Tampilkan halaman pengantar/tugas terakhir saat halaman pertama dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            let defaultId = 'pengantar';
+            
+            // Cek apakah ada hasil dari Flask yang sudah di-render (berdasarkan keberadaan .result-box)
+            if (document.getElementById('tugas1') && document.querySelector('#tugas1 .result-box')) {
+                defaultId = 'tugas1';
+            } else if (document.getElementById('tugas2') && document.querySelector('#tugas2 .result-box')) {
+                defaultId = 'tugas2';
+            } else if (document.getElementById('tugas3') && document.querySelector('#tugas3 .result-box')) {
+                defaultId = 'tugas3';
+            }
+
+            // Panggil showTask dengan ID default
+            showTask(defaultId);
+        });
+
+    </script>
+</body>
+</html>
