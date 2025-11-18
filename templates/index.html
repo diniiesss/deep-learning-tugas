@@ -22,6 +22,7 @@
                 <li><div class="sidebar-item" onclick="showTask('tugas1')">1. Calculator Operator Logika</div></li>
                 <li><div class="sidebar-item" onclick="showTask('tugas2')">2. Prediksi Kata dengan Bidirectional</div></li>
                 <li><div class="sidebar-item" onclick="showTask('tugas3')">3. Prediksi Harga Saham</div></li>
+                <li><div class="sidebar-item" onclick="showTask('tugas4')">4. Deteksi Objek (YOLOv8)</div></li>
             </ol>
         </aside>
 
@@ -35,9 +36,9 @@
                 <p>Silakan pilih salah satu tugas dari daftar di sidebar untuk melihat tampilan antarmuka dan mencoba fungsinya.</p>
             </section>
             
+            
 
             <section id="tugas1" class="task-content green-bg">
-                <h3>1. Calculator Operator Logika</h3>
                 <p>Aplikasi untuk menghitung hasil operasi logika biner dan menampilkan tabel kebenaran lengkap.</p>
                 
                 <form action="/tugas1" method="post" class="task-form">
@@ -104,9 +105,10 @@
                     </div>
                 {% endif %}
             </section>
+            
            
+
             <section id="tugas2" class="task-content green-bg">
-                <h3>2. Prediksi Teks/Kata dengan Varian RNN (Termasuk Bidirectional)</h3>
                 <p>Melatih model RNN (Vanilla, Bidirectional, LSTM, GRU) untuk memprediksi karakter berikutnya berdasarkan teks pelatihan.</p>
                 
                 <form action="/tugas2" method="post" class="task-form">
@@ -152,8 +154,10 @@
                 {% endif %}
             </section>
             
+            
+        
+            
             <section id="tugas3" class="task-content green-bg">
-                <h3>3. Prediksi Harga Saham (LSTM Time Series)</h3>
                 <p>Implementasi model RNN varian (LSTM, GRU, Bidirectional LSTM, Vanilla RNN) untuk memprediksi harga penutupan saham BBCA.</p>
                 
                 <form action="/tugas3" method="post" class="task-form">
@@ -190,12 +194,51 @@
                     </div>
                 {% endif %}
             </section>
+            
+            
+            
+            <section id="tugas4" class="task-content green-bg">
+                <p>Menggunakan model YOLOv8n untuk mendeteksi, melabeli, dan memberi kotak pembatas pada objek (termasuk manusia) di dalam gambar yang diupload.</p>
+                
+                <form action="/tugas4" method="post" class="task-form" enctype="multipart/form-data">
+                    <label for="image_file">Upload Gambar (PNG/JPG yang mengandung objek/orang):</label>
+                    <input type="file" id="image_file" name="image_file" accept="image/*" required>
+
+                    <button type="submit">Jalankan Deteksi Objek</button>
+                </form>
+                
+                {% if hasil_t4 %}
+                    <div class="result-box">
+                        {% if hasil_t4.error %}
+                            <p style="color: red;"><strong>{{ hasil_t4.error }}</strong></p>
+                        {% else %}
+                            <h4>Hasil Deteksi Objek</h4>
+                            <p>Model: **YOLOv8 Nano (Pretrained)**</p>
+                            
+                            <div style="margin-top: 15px;">
+                                <p>Objek yang Terdeteksi (Nama & Keyakinan > 50%):</p>
+                                {% if hasil_t4.detected_objects %}
+                                    <ul>
+                                        {% for obj in hasil_t4.detected_objects %}
+                                            <li>{{ obj }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>⚠️ Tidak ada objek yang terdeteksi (Confidence < 50%).</p>
+                                {% endif %}
+                            </div>
+
+                            <h4 style="margin-top: 20px;">Gambar Hasil Deteksi (Bounding Box)</h4>
+                            {{ hasil_t4.plot_html | safe }}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </section>
             <hr>
         </main>
     </div>
 
     <script>
-        // Fungsi untuk mengkonversi taskId menjadi judul yang sesuai
         function getTaskTitle(taskId) {
             switch(taskId) {
                 case 'tugas1':
@@ -204,34 +247,30 @@
                     return "Tugas 2: Prediksi Kata dengan Bidirectional";
                 case 'tugas3':
                     return "Tugas 3: Prediksi Harga Saham";
+                case 'tugas4':
+                    return "Tugas 4: Deteksi Objek (YOLOv8)";
                 case 'pengantar':
                 default:
                     return "Algoritma Deep Learning";
             }
         }
 
-        // Fungsi untuk menyembunyikan semua konten dan menampilkan yang dipilih
         function showTask(taskId) {
-            // 1. UPDATE JUDUL UTAMA
             const mainTitleElement = document.getElementById('main-title');
             if (mainTitleElement) {
                 mainTitleElement.innerHTML = getTaskTitle(taskId);
             }
 
-            // 2. KONTROL TAMPILAN KONTEN
-            // Sembunyikan semua elemen dengan kelas 'task-content'
             const contents = document.querySelectorAll('.task-content');
             contents.forEach(content => {
                 content.style.display = 'none';
             });
 
-            // Tampilkan elemen dengan ID yang sesuai
             const selectedTask = document.getElementById(taskId);
             if (selectedTask) {
                 selectedTask.style.display = 'block';
             }
             
-            // 3. KONTROL STATUS ACTIVE PADA SIDEBAR
             const sidebarItems = document.querySelectorAll('.sidebar-item');
             sidebarItems.forEach(item => {
                 item.classList.remove('active');
@@ -242,20 +281,19 @@
             }
         }
 
-        // Tampilkan halaman pengantar/tugas terakhir saat halaman pertama dimuat
         document.addEventListener('DOMContentLoaded', () => {
             let defaultId = 'pengantar';
             
-            // Cek apakah ada hasil dari Flask yang sudah di-render (berdasarkan keberadaan .result-box)
-            if (document.getElementById('tugas1') && document.querySelector('#tugas1 .result-box')) {
-                defaultId = 'tugas1';
-            } else if (document.getElementById('tugas2') && document.querySelector('#tugas2 .result-box')) {
-                defaultId = 'tugas2';
+           if (document.getElementById('tugas4') && document.querySelector('#tugas4 .result-box')) {
+                defaultId = 'tugas4';
             } else if (document.getElementById('tugas3') && document.querySelector('#tugas3 .result-box')) {
                 defaultId = 'tugas3';
+            } else if (document.getElementById('tugas2') && document.querySelector('#tugas2 .result-box')) {
+                defaultId = 'tugas2';
+            } else if (document.getElementById('tugas1') && document.querySelector('#tugas1 .result-box')) {
+                defaultId = 'tugas1';
             }
 
-            // Panggil showTask dengan ID default
             showTask(defaultId);
         });
 
