@@ -1,10 +1,10 @@
-ultralytics
-opencv-python 
-Pillow
-Flask
+flask
+gunicorn
 numpy
 pandas
+tensorflow-cpu
 scikit-learn
 matplotlib
-tensorflow
-gunicorn
+Pillow
+ultralytics
+opencv-python
